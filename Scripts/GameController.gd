@@ -1,3 +1,11 @@
+#TODO:
+#add touch
+#add saving highscore
+#add leaderboard
+#add dark mode
+#add gold snakeball for >100 score
+#add plus stuff
+
 extends Node3D
 
 @export var controlBall : Node3D
