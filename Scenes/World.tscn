@@ -1,0 +1,146 @@
+[gd_scene load_steps=15 format=3 uid="uid://b815ri4pv3l47"]
+
+[ext_resource type="Material" uid="uid://b5clbgti6njqx" path="res://Material/AppleMaterial.tres" id="1_eritc"]
+[ext_resource type="Script" path="res://Scripts/GameController.gd" id="1_r1x4g"]
+[ext_resource type="Material" uid="uid://b8tn5nl5227oa" path="res://Material/SnakeHeadMaterial.tres" id="2_2jfsk"]
+[ext_resource type="PackedScene" uid="uid://bgfwvkkn0o3em" path="res://Scenes/BodyPrefab.tscn" id="2_ecc54"]
+[ext_resource type="Material" uid="uid://df66hwgtsgk4r" path="res://Material/BallMaterial.tres" id="2_oe83i"]
+[ext_resource type="PackedScene" uid="uid://dcymnk45im12p" path="res://Scenes/NodePrefab.tscn" id="3_nm2by"]
+[ext_resource type="Material" uid="uid://buk2iu53uw4by" path="res://Material/RingMaterial.tres" id="3_xjle3"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2ux1d"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_ef1qr"]
+sky_material = SubResource("ProceduralSkyMaterial_2ux1d")
+
+[sub_resource type="Environment" id="Environment_63h4j"]
+background_mode = 1
+background_color = Color(1, 1, 1, 1)
+sky = SubResource("Sky_ef1qr")
+ambient_light_source = 2
+tonemap_mode = 2
+
+[sub_resource type="SphereMesh" id="SphereMesh_tg4wo"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bpnwk"]
+top_radius = 0.501
+bottom_radius = 0.501
+height = 0.025
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="SphereMesh" id="SphereMesh_ypsg7"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_aus4h"]
+
+[node name="World" type="Node3D" node_paths=PackedStringArray("controlBall", "head", "apple", "scoreText", "highscoreText", "pausedText")]
+script = ExtResource("1_r1x4g")
+controlBall = NodePath("ControlBall")
+head = NodePath("ControlBall/Head")
+apple = NodePath("Apple")
+turnSpeed = 5.0
+moveSpeed = 100.0
+boost = 50.0
+ballRadius = 0.5
+headRadius = 0.025
+appleRadius = 0.05
+bodyRadius = 0.025
+initialBodyParts = 24
+applePartBonus = 3
+maxAppleTries = 5
+bodyPrefab = ExtResource("2_ecc54")
+nodePrefab = ExtResource("3_nm2by")
+scoreText = NodePath("ScoreText")
+highscoreText = NodePath("HighscoreText")
+pausedText = NodePath("PausedText")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_63h4j")
+
+[node name="BallMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_tg4wo")
+surface_material_override/0 = ExtResource("2_oe83i")
+
+[node name="RingMesh" type="MeshInstance3D" parent="BallMesh"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("CylinderMesh_bpnwk")
+surface_material_override/0 = ExtResource("3_xjle3")
+
+[node name="Apple" type="Node3D" parent="."]
+transform = Transform3D(0.075, 0, 0, 0, 0.075, 0, 0, 0, 0.075, 0, 0, -0.5)
+
+[node name="AppleMesh" type="MeshInstance3D" parent="Apple"]
+mesh = SubResource("SphereMesh_ypsg7")
+surface_material_override/0 = ExtResource("1_eritc")
+
+[node name="ControlBall" type="Node3D" parent="."]
+
+[node name="Head" type="Node3D" parent="ControlBall"]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0.5)
+
+[node name="SnakeHeadMesh" type="MeshInstance3D" parent="ControlBall/Head"]
+mesh = SubResource("SphereMesh_aus4h")
+surface_material_override/0 = ExtResource("2_2jfsk")
+
+[node name="Camera3D" type="Camera3D" parent="ControlBall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+fov = 60.0
+near = 0.3
+far = 4.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="ControlBall"]
+light_energy = 0.6
+sky_mode = 1
+
+[node name="ScoreText" type="Label" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -142.0
+offset_right = 20.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 60
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HighscoreText" type="Label" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -133.0
+offset_right = 20.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.333333, 0.333333, 0.333333, 1)
+theme_override_font_sizes/font_size = 40
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PausedText" type="Label" parent="."]
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -70.0
+offset_right = 70.0
+offset_bottom = 83.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.501961, 0.796078, 1, 1)
+theme_override_font_sizes/font_size = 40
+text = "paused"
+horizontal_alignment = 1
+vertical_alignment = 1
