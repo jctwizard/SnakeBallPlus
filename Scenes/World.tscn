@@ -1,10 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://b815ri4pv3l47"]
+[gd_scene load_steps=17 format=3 uid="uid://b815ri4pv3l47"]
 
 [ext_resource type="Material" uid="uid://b5clbgti6njqx" path="res://Material/AppleMaterial.tres" id="1_eritc"]
 [ext_resource type="Script" path="res://Scripts/GameController.gd" id="1_r1x4g"]
 [ext_resource type="Material" uid="uid://b8tn5nl5227oa" path="res://Material/SnakeHeadMaterial.tres" id="2_2jfsk"]
 [ext_resource type="PackedScene" uid="uid://bgfwvkkn0o3em" path="res://Scenes/BodyPrefab.tscn" id="2_ecc54"]
 [ext_resource type="Material" uid="uid://df66hwgtsgk4r" path="res://Material/BallMaterial.tres" id="2_oe83i"]
+[ext_resource type="Material" uid="uid://75kdw2rw2yhh" path="res://Material/SnakeHeadMaterialGold.tres" id="3_ab384"]
 [ext_resource type="PackedScene" uid="uid://dcymnk45im12p" path="res://Scenes/NodePrefab.tscn" id="3_nm2by"]
 [ext_resource type="Material" uid="uid://buk2iu53uw4by" path="res://Material/RingMaterial.tres" id="3_xjle3"]
 
@@ -35,10 +36,16 @@ cap_bottom = false
 
 [sub_resource type="SphereMesh" id="SphereMesh_aus4h"]
 
-[node name="World" type="Node3D" node_paths=PackedStringArray("controlBall", "head", "apple", "scoreText", "highscoreText", "pausedText")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0nefl"]
+bg_color = Color(0.501961, 0.796078, 1, 0.501961)
+
+[node name="World" type="Node3D" node_paths=PackedStringArray("controlBall", "head", "headMesh", "apple", "scoreText", "highscoreText", "pausedText", "leftPanel", "rightPanel")]
 script = ExtResource("1_r1x4g")
 controlBall = NodePath("ControlBall")
 head = NodePath("ControlBall/Head")
+headMesh = NodePath("ControlBall/Head/SnakeHeadMesh")
+normalHeadMaterial = ExtResource("2_2jfsk")
+goldHeadMaterial = ExtResource("3_ab384")
 apple = NodePath("Apple")
 turnSpeed = 5.0
 moveSpeed = 100.0
@@ -52,9 +59,11 @@ applePartBonus = 3
 maxAppleTries = 5
 bodyPrefab = ExtResource("2_ecc54")
 nodePrefab = ExtResource("3_nm2by")
-scoreText = NodePath("ScoreText")
-highscoreText = NodePath("HighscoreText")
+scoreText = NodePath("Scores/ScoreText")
+highscoreText = NodePath("Scores/HighscoreText")
 pausedText = NodePath("PausedText")
+leftPanel = NodePath("Buttons/LeftButton/Panel")
+rightPanel = NodePath("Buttons/RightButton/Panel")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_63h4j")
@@ -94,44 +103,85 @@ far = 4.0
 light_energy = 0.6
 sky_mode = 1
 
-[node name="ScoreText" type="Label" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
+[node name="Buttons" type="HBoxContainer" parent="."]
+anchors_preset = -1
+anchor_top = 0.66
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -142.0
-offset_right = 20.0
-offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 60
-text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_constants/separation = 0
+alignment = 1
 
-[node name="HighscoreText" type="Label" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
+[node name="LeftButton" type="Control" parent="Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PanelBackground" type="Panel" parent="Buttons/LeftButton"]
+layout_mode = 1
+anchors_preset = 12
 anchor_top = 1.0
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -133.0
-offset_right = 20.0
-offset_bottom = -50.0
+offset_left = -1.0
+offset_top = -127.6
+offset_right = -1.0
+offset_bottom = 0.399963
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0.333333, 0.333333, 0.333333, 1)
-theme_override_font_sizes/font_size = 40
-text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0nefl")
+
+[node name="Panel" type="Panel" parent="Buttons/LeftButton"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -127.6
+offset_right = -1.0
+offset_bottom = 0.399963
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0nefl")
+
+[node name="RightButton" type="Control" parent="Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PanelBackground" type="Panel" parent="Buttons/RightButton"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -127.6
+offset_right = -1.0
+offset_bottom = 0.399963
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0nefl")
+
+[node name="Panel" type="Panel" parent="Buttons/RightButton"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -127.6
+offset_right = -1.0
+offset_bottom = 0.399963
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0nefl")
 
 [node name="PausedText" type="Label" parent="."]
-visible = false
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -141,6 +191,53 @@ offset_bottom = 83.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0.501961, 0.796078, 1, 1)
 theme_override_font_sizes/font_size = 40
-text = "paused"
+text = "pause"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Scores" type="Control" parent="."]
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 0.25
+grow_horizontal = 2
+
+[node name="ScoreText" type="Label" parent="Scores"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -136.0
+offset_right = 20.0
+offset_bottom = -53.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 60
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HighscoreText" type="Label" parent="Scores"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -83.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.333333, 0.333333, 0.333333, 1)
+theme_override_font_sizes/font_size = 40
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="gui_input" from="Buttons/LeftButton" to="." method="_on_left_button_gui_input"]
+[connection signal="gui_input" from="Buttons/RightButton" to="." method="_on_right_button_gui_input"]
+[connection signal="gui_input" from="PausedText" to="." method="_on_paused_text_gui_input"]

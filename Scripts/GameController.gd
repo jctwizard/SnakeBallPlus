@@ -10,6 +10,9 @@ extends Node3D
 
 @export var controlBall : Node3D
 @export var head : Node3D
+@export var headMesh : MeshInstance3D
+@export var normalHeadMaterial : Material
+@export var goldHeadMaterial : Material
 @export var apple : Node3D
 @export var turnSpeed : float
 @export var moveSpeed : float
@@ -26,6 +29,8 @@ extends Node3D
 @export var scoreText : Label
 @export var highscoreText : Label
 @export var pausedText : Label
+@export var leftPanel : Panel
+@export var rightPanel : Panel
 
 var score : int = 0
 var highscore : int = 0
@@ -35,13 +40,28 @@ var bodyParts : Array[Node3D] = []
 var gameOver = false
 var paused = false
 
+var tapLeft : int = 0
+var tapRight : int = 0
+var highscore_key : String = "highscore"
+
 func _ready():
 	addBodyPart(initialBodyParts)
-	pausedText.visible = false
+	leftPanel.visible = false
+	rightPanel.visible = false
+	
+	headMesh.material_override = normalHeadMaterial
+	
+	if SaveSystem.has(highscore_key):
+		highscore = SaveSystem.get_var(highscore_key)
+		highscoreText.text = str(highscore)
+
+func pause(pause : bool):
+	paused = pause
+	pausedText.text = "paused" if paused else "pause"
 
 func _physics_process(delta):
 	if gameOver:
-		if Input.is_action_just_pressed("continue"):
+		if Input.is_action_just_pressed("continue") or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			for part in bodyParts.size():
 				bodyParts[part].queue_free()
 			
@@ -49,20 +69,22 @@ func _physics_process(delta):
 			
 			addBodyPart(initialBodyParts)
 			
+			headMesh.material_override = normalHeadMaterial
+			
 			score = 0
 			scoreText.text = str(score)
 			highscoreText.text = str(highscore)
 			
 			gameOver = false
+			
+			pausedText.text = "pause"
 	else:
 		if paused:
 			if Input.is_action_just_pressed("pause"):
-				paused = false
-				pausedText.visible = false
+				pause(false)
 		else:
 			if Input.is_action_just_pressed("pause"):
-				paused = true
-				pausedText.visible = true
+				pause(true)
 				
 			if (sphereCollision(head, headRadius, apple, appleRadius)):
 				addBodyPart(applePartBonus)
@@ -82,12 +104,19 @@ func _physics_process(delta):
 				scoreText.text = str(score)
 				
 				if score > highscore:
+					SaveSystem.set_var(highscore_key, score)
 					highscore = score
+					
+				if score >= 100:
+					headMesh.material_override = goldHeadMaterial
 			
 			moveBodyParts()
 			
-			var rotateLeft = Input.is_key_pressed(KEY_LEFT)
-			var rotateRight = Input.is_key_pressed(KEY_RIGHT)
+			var rotateLeft = Input.is_key_pressed(KEY_LEFT) or (tapLeft > 0)
+			var rotateRight = Input.is_key_pressed(KEY_RIGHT) or (tapRight > 0)
+			
+			leftPanel.visible = rotateLeft
+			rightPanel.visible = rotateRight
 			
 			var currentMoveSpeed = moveSpeed
 			
@@ -107,6 +136,9 @@ func _physics_process(delta):
 			
 			if (bodyCollision(head, headRadius) && score > 0):
 				gameOver = true
+				pausedText.text = "game over"
+				leftPanel.visible = false
+				rightPanel.visible = false
 		
 func addBodyPart(count : int = 1):
 	for part in range(0, count):
@@ -147,3 +179,23 @@ func bodyCollision(collider : Node3D, collisionRadius : float):
 				return true
 
 	return false
+
+
+func _on_left_button_gui_input(event):
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			tapLeft += 1
+		else:
+			tapLeft -= 1
+
+func _on_right_button_gui_input(event):
+	if event is InputEventScreenTouch and event.index == 0:
+		if event.pressed:
+			tapRight += 1
+		else:
+			tapRight -= 1
+
+func _on_paused_text_gui_input(event):
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			pause(!paused)
