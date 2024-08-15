@@ -112,8 +112,8 @@ func _physics_process(delta):
 			
 			moveBodyParts()
 			
-			var rotateLeft = Input.is_key_pressed(KEY_LEFT) or (tapLeft > 0)
-			var rotateRight = Input.is_key_pressed(KEY_RIGHT) or (tapRight > 0)
+			var rotateLeft = Input.is_key_pressed(KEY_LEFT) or rect_is_touched(leftPanel.get_global_rect())
+			var rotateRight = Input.is_key_pressed(KEY_RIGHT) or rect_is_touched(rightPanel.get_global_rect())
 			
 			leftPanel.visible = rotateLeft
 			rightPanel.visible = rotateRight
@@ -180,22 +180,28 @@ func bodyCollision(collider : Node3D, collisionRadius : float):
 
 	return false
 
-
-func _on_left_button_gui_input(event):
-	if event is InputEventScreenTouch:
-		if event.pressed:
-			tapLeft += 1
-		else:
-			tapLeft -= 1
-
-func _on_right_button_gui_input(event):
-	if event is InputEventScreenTouch and event.index == 0:
-		if event.pressed:
-			tapRight += 1
-		else:
-			tapRight -= 1
-
 func _on_paused_text_gui_input(event):
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			pause(!paused)
+			
+var state = {}
+
+func rect_is_touched(rect : Rect2)->bool:
+	for t in state.values():
+		if rect.has_point(t):
+			return true
+			
+	return false
+
+func _unhandled_input(event):
+	if event is InputEventScreenTouch:
+		if event.pressed: # Down.
+			state[event.index] = event.position
+		else: # Up.
+			state.erase(event.index)
+		get_viewport().set_input_as_handled()
+
+	elif event is InputEventScreenDrag: # Movement.
+		state[event.index] = event.position
+		get_viewport().set_input_as_handled()

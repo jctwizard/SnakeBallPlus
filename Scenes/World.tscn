@@ -33,8 +33,12 @@ cap_top = false
 cap_bottom = false
 
 [sub_resource type="SphereMesh" id="SphereMesh_ypsg7"]
+radial_segments = 16
+rings = 16
 
 [sub_resource type="SphereMesh" id="SphereMesh_aus4h"]
+radial_segments = 16
+rings = 16
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0nefl"]
 bg_color = Color(0.501961, 0.796078, 1, 0.501961)
@@ -110,12 +114,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
 [node name="LeftButton" type="Control" parent="Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 2
 
 [node name="PanelBackground" type="Panel" parent="Buttons/LeftButton"]
 layout_mode = 1
@@ -150,6 +156,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_0nefl")
 [node name="RightButton" type="Control" parent="Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 2
 
 [node name="PanelBackground" type="Panel" parent="Buttons/RightButton"]
 layout_mode = 1
@@ -181,25 +188,12 @@ grow_vertical = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_0nefl")
 
-[node name="PausedText" type="Label" parent="."]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -70.0
-offset_right = 70.0
-offset_bottom = 83.0
-grow_horizontal = 2
-theme_override_colors/font_color = Color(0.501961, 0.796078, 1, 1)
-theme_override_font_sizes/font_size = 40
-text = "pause"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="Scores" type="Control" parent="."]
 layout_mode = 3
 anchor_right = 1.0
 anchor_bottom = 0.25
 grow_horizontal = 2
+mouse_filter = 2
 
 [node name="ScoreText" type="Label" parent="Scores"]
 layout_mode = 1
@@ -238,6 +232,19 @@ text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="gui_input" from="Buttons/LeftButton" to="." method="_on_left_button_gui_input"]
-[connection signal="gui_input" from="Buttons/RightButton" to="." method="_on_right_button_gui_input"]
+[node name="PausedText" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -70.0
+offset_right = 70.0
+offset_bottom = 83.0
+grow_horizontal = 2
+mouse_filter = 0
+theme_override_colors/font_color = Color(0.501961, 0.796078, 1, 1)
+theme_override_font_sizes/font_size = 40
+text = "pause"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="gui_input" from="PausedText" to="." method="_on_paused_text_gui_input"]
